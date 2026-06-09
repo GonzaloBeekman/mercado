@@ -6,21 +6,26 @@ const app = express();
 const entregasRoutes = require('./routes/entregas');
 
 // Origenes permitidos para que el frontend pueda consumir la API.
-// En produccion CORS_ORIGIN debe ser la URL de Vercel, por ejemplo:
-// https://mi-market-app.vercel.app
+// CORS_ORIGIN puede tener una o varias URLs separadas por coma.
 const allowedOrigins = [
   'http://localhost:8081',
   'http://localhost:8082',
   'http://localhost:8083',
   'http://localhost:19006',
-  process.env.CORS_ORIGIN
+  ...(process.env.CORS_ORIGIN || '')
+    .split(',')
+    .map((origin) => origin.trim())
 ].filter(Boolean);
 
-// CORS bloquea paginas desconocidas, pero permite local y la web publicada.
+// Vercel genera URLs propias para preview y produccion, por eso permitimos *.vercel.app.
+const isVercelOrigin = (origin) =>
+  /^https:\/\/[a-z0-9-]+\.vercel\.app$/i.test(origin);
+
+// CORS bloquea paginas desconocidas, pero permite local, Vercel y la URL configurada.
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
+      if (!origin || allowedOrigins.includes(origin) || isVercelOrigin(origin)) {
         return callback(null, true);
       }
 
