@@ -1,7 +1,11 @@
 const verificarAdmin = (req, res, next) => {
-  if (req.user.rol !== 'admin') {
-    return res.status(403).json({ message: 'Acceso solo para admin' });
+  // En esta app el vendedor es quien administra sus productos.
+  const rolesPermitidos = ['admin', 'vendedor'];
+
+  if (!rolesPermitidos.includes(req.user.rol)) {
+    return res.status(403).json({ message: 'Acceso solo para vendedor o admin' });
   }
+
   next();
 };
 

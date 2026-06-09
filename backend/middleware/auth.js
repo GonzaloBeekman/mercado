@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 
-const SECRET = 'secreto';
+// Usa la misma clave que routes/usuarios.js para que login y validacion coincidan.
+const SECRET = process.env.JWT_SECRET || 'secreto';
 
 module.exports = (req, res, next) => {
   const authHeader = req.headers['authorization'];
