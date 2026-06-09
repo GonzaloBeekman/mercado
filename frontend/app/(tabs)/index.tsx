@@ -143,7 +143,8 @@ export default function Home() {
         nombre: item.nombre,
         precio: item.precio,
         descripcion: item.descripcion,
-        imagen_url: item.imagen_url
+        imagen_url: item.imagen_url,
+        stock: item.stock
       }
     });
   };

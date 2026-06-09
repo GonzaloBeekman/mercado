@@ -3,7 +3,8 @@ import {
   Text,
   TextInput,
   Button,
-  Image
+  Image,
+  Platform
 } from 'react-native';
 
 import { useState } from 'react';
@@ -19,76 +20,73 @@ import { API_URL } from '../config/api';
 import CustomModal from '../components/CustomModal';
 
 export default function EditarProducto() {
-
   const {
     id,
     nombre,
     precio,
     descripcion,
-    imagen_url
+    imagen_url,
+    stock
   } = useLocalSearchParams();
 
   const router = useRouter();
 
-  // STATES
+  // Estados del formulario cargados con los datos actuales del producto.
   const [nuevoNombre, setNuevoNombre] =
-    useState(nombre as string);
+    useState((nombre as string) || '');
 
   const [nuevoPrecio, setNuevoPrecio] =
-    useState(String(precio));
+    useState(String(precio || ''));
 
   const [nuevaDescripcion, setNuevaDescripcion] =
-    useState(descripcion as string);
+    useState((descripcion as string) || '');
 
   const [imagen, setImagen] =
     useState((imagen_url as string) || '');
 
-  // 🔥 MODAL
+  // Si la imagen no carga, mostramos un placeholder en vez de una card vacia.
+  const [imagenConError, setImagenConError] =
+    useState(false);
+
+  // Estados del modal reutilizable.
   const [modalVisible, setModalVisible] =
     useState(false);
 
   const [modalMessage, setModalMessage] =
     useState('');
 
-  // EDITAR
+  const imagenLimpia = imagen.trim();
+  const mostrarImagen = Boolean(imagenLimpia) && !imagenConError;
+
+  // Guarda los cambios del producto en el backend.
   const editarProducto = async () => {
+    const nombreLimpio = nuevoNombre.trim();
+    const precioLimpio = nuevoPrecio.trim();
+    const descripcionLimpia = nuevaDescripcion.trim();
 
-    // VALIDACIÓN
-    if (!nuevoNombre || !nuevoPrecio) {
-
-      setModalMessage(
-        'Nombre y precio obligatorios'
-      );
-
+    if (!nombreLimpio || !precioLimpio) {
+      setModalMessage('Nombre y precio obligatorios');
       setModalVisible(true);
-
       return;
     }
 
-    // PRECIO
-    if (isNaN(Number(nuevoPrecio))) {
-
-      setModalMessage(
-        'El precio debe ser numérico'
-      );
-
+    if (isNaN(Number(precioLimpio))) {
+      setModalMessage('El precio debe ser numerico');
       setModalVisible(true);
-
       return;
     }
 
     try {
-
-      const token =
-        await AsyncStorage.getItem('token');
+      const token = await AsyncStorage.getItem('token');
 
       await axios.put(
         `${API_URL}/api/productos/${id}`,
         {
-          nombre: nuevoNombre,
-          precio: parseFloat(nuevoPrecio),
-          descripcion: nuevaDescripcion,
-          imagen_url: imagen
+          nombre: nombreLimpio,
+          precio: parseFloat(precioLimpio),
+          stock: stock ? Number(stock) : null,
+          descripcion: descripcionLimpia,
+          imagen_url: imagenLimpia
         },
         {
           headers: {
@@ -97,25 +95,15 @@ export default function EditarProducto() {
         }
       );
 
-      // ✅ ÉXITO
-      setModalMessage(
-        'Producto actualizado correctamente'
-      );
-
+      setModalMessage('Producto actualizado correctamente');
       setModalVisible(true);
 
-      // ⏳ pausa para mostrar modal
       setTimeout(() => {
         router.back();
       }, 1000);
-
     } catch (err: any) {
+      console.log(err?.response?.data || err.message);
 
-      console.log(
-        err?.response?.data || err.message
-      );
-
-      // ❌ ERROR
       setModalMessage(
         err?.response?.data?.message ||
         'No se pudo actualizar'
@@ -127,37 +115,55 @@ export default function EditarProducto() {
 
   return (
     <View style={styles.container}>
-
-      {/* TÍTULO */}
       <Text style={styles.title}>
-        ✏️ Editar Producto
+        Editar Producto
       </Text>
 
-      {/* IMAGEN */}
-      <Image
-        source={{
-          uri:
-            imagen ||
-            'https://picsum.photos/300'
-        }}
-        style={{
-          width: '100%',
-          height: 150,
-          borderRadius: 10,
-          marginBottom: 10
-        }}
-        resizeMode="cover"
-      />
+      {/* Vista previa de la imagen del producto. */}
+      {mostrarImagen ? (
+        <Image
+          source={{
+            uri: imagenLimpia
+          }}
+          style={{
+            width: '100%',
+            height: 150,
+            borderRadius: 10,
+            marginBottom: 10,
+            maxWidth: Platform.OS === 'web' ? 580 : undefined
+          }}
+          resizeMode="cover"
+          onError={() => setImagenConError(true)}
+        />
+      ) : (
+        <View
+          style={{
+            width: '100%',
+            height: 150,
+            borderRadius: 10,
+            marginBottom: 10,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: '#f0f0f0',
+            maxWidth: Platform.OS === 'web' ? 580 : undefined
+          }}
+        >
+          <Text style={{ color: '#777', fontWeight: '600' }}>
+            Sin imagen
+          </Text>
+        </View>
+      )}
 
-      {/* URL */}
       <TextInput
         placeholder="URL de imagen"
         value={imagen}
-        onChangeText={setImagen}
+        onChangeText={(text) => {
+          setImagen(text);
+          setImagenConError(false);
+        }}
         style={styles.input}
       />
 
-      {/* NOMBRE */}
       <TextInput
         placeholder="Nombre"
         value={nuevoNombre}
@@ -165,7 +171,6 @@ export default function EditarProducto() {
         style={styles.input}
       />
 
-      {/* PRECIO */}
       <TextInput
         placeholder="Precio"
         value={nuevoPrecio}
@@ -174,9 +179,8 @@ export default function EditarProducto() {
         style={styles.input}
       />
 
-      {/* DESCRIPCIÓN */}
       <TextInput
-        placeholder="Descripción"
+        placeholder="Descripcion"
         value={nuevaDescripcion}
         onChangeText={setNuevaDescripcion}
         style={[
@@ -186,21 +190,18 @@ export default function EditarProducto() {
         multiline
       />
 
-      {/* BOTÓN */}
       <View style={{ marginTop: 10 }}>
         <Button
-          title="💾 Guardar cambios"
+          title="Guardar cambios"
           onPress={editarProducto}
         />
       </View>
 
-      {/* 🔥 MODAL */}
       <CustomModal
         visible={modalVisible}
         message={modalMessage}
         onClose={() => setModalVisible(false)}
       />
-
     </View>
   );
 }

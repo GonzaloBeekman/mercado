@@ -65,7 +65,8 @@ router.put('/:id', verificarToken, (req, res) => {
   } = req.body;
 
   db.query(
-    'UPDATE productos SET nombre=?, precio=?, stock=?, descripcion=?, imagen_url=? WHERE id=?',
+    // Si stock no llega desde el formulario, conserva el valor actual del producto.
+    'UPDATE productos SET nombre=?, precio=?, stock=COALESCE(?, stock), descripcion=?, imagen_url=? WHERE id=?',
     [nombre, precio, stock, descripcion, imagen_url, id],
     (err) => {
       if (err) return res.status(500).json(err);

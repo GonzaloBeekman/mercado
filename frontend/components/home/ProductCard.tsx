@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { View, Text, Image, TouchableOpacity, Platform } from 'react-native';
 
 type Producto = {
@@ -29,6 +30,12 @@ export function ProductCard({
   onEliminar
 }: Props) {
   const isWeb = Platform.OS === 'web';
+  const [imageError, setImageError] = useState(false);
+
+  // Limpiamos la URL para evitar espacios pegados al copiarla desde el navegador.
+  const imageUrl = item.imagen_url?.trim();
+  const shouldShowImage = Boolean(imageUrl) && !imageError;
+
   const cardWidth = isWeb
     ? numColumns === 4
       ? '23.5%'
@@ -72,16 +79,33 @@ export function ProductCard({
           marginBottom: 5
         }}
       >
-        <Image
-          source={{
-            uri: item.imagen_url || 'https://picsum.photos/300'
-          }}
-          style={{
-            width: '100%',
-            height: '100%'
-          }}
-          resizeMode="cover"
-        />
+        {shouldShowImage ? (
+          <Image
+            source={{
+              uri: imageUrl
+            }}
+            style={{
+              width: '100%',
+              height: '100%'
+            }}
+            resizeMode="cover"
+            onError={() => setImageError(true)}
+          />
+        ) : (
+          <View
+            style={{
+              width: '100%',
+              height: '100%',
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: '#f0f0f0'
+            }}
+          >
+            <Text style={{ color: '#888', fontWeight: '600' }}>
+              Sin imagen
+            </Text>
+          </View>
+        )}
       </View>
 
       {/* Datos principales del producto. */}
