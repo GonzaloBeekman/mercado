@@ -2,9 +2,9 @@ import {
   View,
   Text,
   TextInput,
-  Button,
   Image,
-  Platform
+  Platform,
+  TouchableOpacity
 } from 'react-native';
 
 import { useState } from 'react';
@@ -30,6 +30,14 @@ export default function EditarProducto() {
   } = useLocalSearchParams();
 
   const router = useRouter();
+  const isWeb = Platform.OS === 'web';
+  const inputCardStyle = [
+    styles.input,
+    {
+      maxWidth: undefined,
+      alignSelf: 'stretch' as const
+    }
+  ];
 
   // Estados del formulario cargados con los datos actuales del producto.
   const [nuevoNombre, setNuevoNombre] =
@@ -37,6 +45,9 @@ export default function EditarProducto() {
 
   const [nuevoPrecio, setNuevoPrecio] =
     useState(String(precio || ''));
+
+  const [nuevoStock, setNuevoStock] =
+    useState(String(stock ?? '0'));
 
   const [nuevaDescripcion, setNuevaDescripcion] =
     useState((descripcion as string) || '');
@@ -62,16 +73,23 @@ export default function EditarProducto() {
   const editarProducto = async () => {
     const nombreLimpio = nuevoNombre.trim();
     const precioLimpio = nuevoPrecio.trim();
+    const stockLimpio = nuevoStock.trim();
     const descripcionLimpia = nuevaDescripcion.trim();
 
-    if (!nombreLimpio || !precioLimpio) {
-      setModalMessage('Nombre y precio obligatorios');
+    if (!nombreLimpio || !precioLimpio || !stockLimpio) {
+      setModalMessage('Nombre, precio y stock son obligatorios');
       setModalVisible(true);
       return;
     }
 
     if (isNaN(Number(precioLimpio))) {
       setModalMessage('El precio debe ser numerico');
+      setModalVisible(true);
+      return;
+    }
+
+    if (isNaN(Number(stockLimpio)) || Number(stockLimpio) < 0) {
+      setModalMessage('El stock debe ser un numero mayor o igual a 0');
       setModalVisible(true);
       return;
     }
@@ -84,7 +102,7 @@ export default function EditarProducto() {
         {
           nombre: nombreLimpio,
           precio: parseFloat(precioLimpio),
-          stock: stock ? Number(stock) : null,
+          stock: Number(stockLimpio),
           descripcion: descripcionLimpia,
           imagen_url: imagenLimpia
         },
@@ -115,86 +133,122 @@ export default function EditarProducto() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>
-        Editar Producto
-      </Text>
+      <View
+        style={{
+          width: '100%',
+          maxWidth: isWeb ? 620 : undefined,
+          alignSelf: 'center',
+          backgroundColor: '#fff',
+          borderRadius: isWeb ? 12 : 16,
+          padding: isWeb ? 22 : 18,
+          shadowColor: '#000',
+          shadowOpacity: 0.08,
+          shadowRadius: 8,
+          elevation: 3
+        }}
+      >
+        <Text style={[styles.title, { alignSelf: 'flex-start' }]}>
+          Editar Producto
+        </Text>
 
-      {/* Vista previa de la imagen del producto. */}
-      {mostrarImagen ? (
-        <Image
-          source={{
-            uri: imagenLimpia
+        {/* Vista previa de la imagen del producto. */}
+        {mostrarImagen ? (
+          <Image
+            source={{
+              uri: imagenLimpia
+            }}
+            style={{
+              width: '100%',
+              height: isWeb ? 210 : 170,
+              borderRadius: 10,
+              marginBottom: 12
+            }}
+            resizeMode="cover"
+            onError={() => setImagenConError(true)}
+          />
+        ) : (
+          <View
+            style={{
+              width: '100%',
+              height: isWeb ? 210 : 170,
+              borderRadius: 10,
+              marginBottom: 12,
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: '#f0f0f0'
+            }}
+          >
+            <Text style={{ color: '#777', fontWeight: '600' }}>
+              Sin imagen
+            </Text>
+          </View>
+        )}
+
+        <TextInput
+          placeholder="URL de imagen"
+          value={imagen}
+          onChangeText={(text) => {
+            setImagen(text);
+            setImagenConError(false);
           }}
-          style={{
-            width: '100%',
-            height: 150,
-            borderRadius: 10,
-            marginBottom: 10,
-            maxWidth: Platform.OS === 'web' ? 580 : undefined
-          }}
-          resizeMode="cover"
-          onError={() => setImagenConError(true)}
+          style={inputCardStyle}
         />
-      ) : (
+
+        <TextInput
+          placeholder="Nombre"
+          value={nuevoNombre}
+          onChangeText={setNuevoNombre}
+          style={inputCardStyle}
+        />
+
         <View
           style={{
-            width: '100%',
-            height: 150,
-            borderRadius: 10,
-            marginBottom: 10,
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: '#f0f0f0',
-            maxWidth: Platform.OS === 'web' ? 580 : undefined
+            flexDirection: isWeb ? 'row' : 'column',
+            gap: isWeb ? 10 : 0
           }}
         >
-          <Text style={{ color: '#777', fontWeight: '600' }}>
-            Sin imagen
-          </Text>
+          <TextInput
+            placeholder="Precio"
+            value={nuevoPrecio}
+            onChangeText={setNuevoPrecio}
+            keyboardType="numeric"
+            style={[...inputCardStyle, { flex: 1 }]}
+          />
+
+          <TextInput
+            placeholder="Stock"
+            value={nuevoStock}
+            onChangeText={setNuevoStock}
+            keyboardType="numeric"
+            style={[...inputCardStyle, { flex: 1 }]}
+          />
         </View>
-      )}
 
-      <TextInput
-        placeholder="URL de imagen"
-        value={imagen}
-        onChangeText={(text) => {
-          setImagen(text);
-          setImagenConError(false);
-        }}
-        style={styles.input}
-      />
-
-      <TextInput
-        placeholder="Nombre"
-        value={nuevoNombre}
-        onChangeText={setNuevoNombre}
-        style={styles.input}
-      />
-
-      <TextInput
-        placeholder="Precio"
-        value={nuevoPrecio}
-        onChangeText={setNuevoPrecio}
-        keyboardType="numeric"
-        style={styles.input}
-      />
-
-      <TextInput
-        placeholder="Descripcion"
-        value={nuevaDescripcion}
-        onChangeText={setNuevaDescripcion}
-        style={[
-          styles.input,
-          { height: 80 }
-        ]}
-        multiline
-      />
-
-      <View style={{ marginTop: 10 }}>
-        <Button
-          title="Guardar cambios"
-          onPress={editarProducto}
+        <TextInput
+          placeholder="Descripcion"
+          value={nuevaDescripcion}
+          onChangeText={setNuevaDescripcion}
+          style={[
+            ...inputCardStyle,
+            { height: 90, textAlignVertical: 'top' }
+          ]}
+          multiline
         />
+
+        <TouchableOpacity
+          onPress={editarProducto}
+          style={{
+            backgroundColor: '#00a650',
+            paddingVertical: 13,
+            borderRadius: 9,
+            alignItems: 'center',
+            marginTop: 4
+          }}
+        >
+          <Text style={{ color: '#fff', fontWeight: '700' }}>
+            Guardar cambios
+          </Text>
+        </TouchableOpacity>
       </View>
 
       <CustomModal

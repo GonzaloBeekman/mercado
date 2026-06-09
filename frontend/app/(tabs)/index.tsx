@@ -1,4 +1,4 @@
-import { View, Text, FlatList, TouchableOpacity, Dimensions, Platform } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, useWindowDimensions, Platform } from 'react-native';
 import { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import { useRouter, useFocusEffect } from 'expo-router';
@@ -27,7 +27,7 @@ export default function Home() {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
 
-  const screenWidth = Dimensions.get('window').width;
+  const { width: screenWidth } = useWindowDimensions();
   const isWeb = Platform.OS === 'web';
 
   // En web usamos mas columnas para que las cards no queden enormes.

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { View, Text, Image, TouchableOpacity, Platform } from 'react-native';
 
 type Producto = {
@@ -36,6 +36,11 @@ export function ProductCard({
   const imageUrl = item.imagen_url?.trim();
   const shouldShowImage = Boolean(imageUrl) && !imageError;
 
+  // Si el vendedor cambia la URL, la card vuelve a intentar cargar la imagen.
+  useEffect(() => {
+    setImageError(false);
+  }, [imageUrl]);
+
   const cardWidth = isWeb
     ? numColumns === 4
       ? '23.5%'
@@ -47,6 +52,7 @@ export function ProductCard({
     : numColumns === 1
       ? '92%'
       : '47%';
+  const hasStock = item.stock !== undefined && item.stock !== null;
 
   return (
     <View
@@ -147,20 +153,19 @@ export function ProductCard({
         </Text>
       )}
 
-      {item.stock !== undefined && item.stock !== null && (
+      {hasStock && (
         <Text
           style={{
-            backgroundColor: '#00a650',
-            paddingVertical: isWeb ? 8 : 12,
+            backgroundColor: Number(item.stock) > 0 ? '#e8f7ef' : '#fff0f0',
+            paddingVertical: isWeb ? 7 : 10,
             borderRadius: 10,
-            margin: isWeb ? 14 : 10,
+            marginHorizontal: isWeb ? 14 : 10,
+            marginTop: 10,
             textAlign: 'center',
-            color: '#fff',
+            color: Number(item.stock) > 0 ? '#007f3b' : '#c62828',
             fontWeight: 'bold',
-            shadowColor: '#00a650',
-            shadowOpacity: 0.3,
-            shadowRadius: 4,
-            elevation: 2
+            borderWidth: 1,
+            borderColor: Number(item.stock) > 0 ? '#bfe9d1' : '#ffd6d6'
           }}
         >
           Stock: {item.stock}
@@ -211,27 +216,46 @@ export function ProductCard({
         <View
           style={{
             flexDirection: 'row',
-            justifyContent: 'space-between',
+            gap: 10,
             alignItems: 'center',
-            backgroundColor: '#fff',
-            padding: isWeb ? 12 : 15,
-            borderRadius: 10,
+            paddingTop: 6,
             margin: isWeb ? 14 : 10,
-            shadowColor: '#000',
-            shadowOffset: {
-              width: 0,
-              height: 2
-            },
-            shadowOpacity: 0.08,
-            shadowRadius: 5,
-            elevation: 3
+            marginTop: 12
           }}
         >
-          <Text onPress={() => onEditar(item)}>Editar</Text>
+          <TouchableOpacity
+            onPress={() => onEditar(item)}
+            style={{
+              flex: 1,
+              backgroundColor: '#eef5ff',
+              borderColor: '#3483fa',
+              borderWidth: 1,
+              paddingVertical: isWeb ? 9 : 10,
+              borderRadius: 8,
+              alignItems: 'center'
+            }}
+          >
+            <Text style={{ color: '#1259c3', fontWeight: '700' }}>
+              Editar
+            </Text>
+          </TouchableOpacity>
 
-          <Text onPress={() => onEliminar(item.id)}>
-            Eliminar
-          </Text>
+          <TouchableOpacity
+            onPress={() => onEliminar(item.id)}
+            style={{
+              flex: 1,
+              backgroundColor: '#fff0f0',
+              borderColor: '#e53935',
+              borderWidth: 1,
+              paddingVertical: isWeb ? 9 : 10,
+              borderRadius: 8,
+              alignItems: 'center'
+            }}
+          >
+            <Text style={{ color: '#c62828', fontWeight: '700' }}>
+              Eliminar
+            </Text>
+          </TouchableOpacity>
         </View>
       )}
     </View>
