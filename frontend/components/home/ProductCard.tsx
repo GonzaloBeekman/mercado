@@ -186,7 +186,9 @@ export function ProductCard({
               alignItems: 'center'
             }}
           >
-            <Text style={{ color: '#fff' }}>Agregar</Text>
+            <Text style={{ color: '#fff' }}>
+              Agregar al carrito
+            </Text>
           </TouchableOpacity>
         ) : (
           <View
