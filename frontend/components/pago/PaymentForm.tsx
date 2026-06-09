@@ -13,6 +13,7 @@ type Props = {
 
 const inputStyle = {
   backgroundColor: '#fff',
+  color: '#111',
   padding: 12,
   borderRadius: 8,
   marginBottom: 10
@@ -39,6 +40,7 @@ export function PaymentForm({
         value={numero}
         onChangeText={onNumeroChange}
         style={inputStyle}
+        placeholderTextColor="#777"
       />
 
       <TextInput
@@ -46,6 +48,7 @@ export function PaymentForm({
         value={titular}
         onChangeText={onTitularChange}
         style={inputStyle}
+        placeholderTextColor="#777"
       />
 
       <TextInput
@@ -54,6 +57,7 @@ export function PaymentForm({
         value={fecha}
         onChangeText={onFechaChange}
         style={inputStyle}
+        placeholderTextColor="#777"
       />
 
       <TextInput
@@ -67,6 +71,7 @@ export function PaymentForm({
           ...inputStyle,
           marginBottom: 20
         }}
+        placeholderTextColor="#777"
       />
     </>
   );

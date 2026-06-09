@@ -88,6 +88,7 @@ export default function Register() {
           value={nombre}
           onChangeText={setNombre}
           style={styles.input}
+          placeholderTextColor="#777"
         />
 
         <TextInput
@@ -97,6 +98,7 @@ export default function Register() {
           style={styles.input}
           autoCapitalize="none"
           keyboardType="email-address"
+          placeholderTextColor="#777"
         />
 
         <PasswordInput

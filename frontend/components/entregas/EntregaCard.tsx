@@ -215,12 +215,14 @@ export function EntregaCard({
             }}
             style={{
               backgroundColor: '#f6f8fb',
+              color: '#111',
               borderWidth: 1,
               borderColor: '#ddd',
               borderRadius: 8,
               padding: 10,
               marginBottom: 10
             }}
+            placeholderTextColor="#777"
           />
 
           <TouchableOpacity

@@ -41,6 +41,8 @@ export default function LoginScreen({ navigation }) {
         onChangeText={setEmail}
         value={email}
         autoCapitalize="none"
+        placeholderTextColor="#777"
+        style={{ color: '#111' }}
       />
 
       <TextInput
@@ -48,6 +50,8 @@ export default function LoginScreen({ navigation }) {
         secureTextEntry
         onChangeText={setPassword}
         value={password}
+        placeholderTextColor="#777"
+        style={{ color: '#111' }}
       />
 
       <Button title="Login" onPress={login} />
