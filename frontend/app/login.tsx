@@ -1,6 +1,6 @@
 import { Platform, View } from 'react-native';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -109,11 +109,7 @@ export default function Login() {
     try {
       setGoogleLoading(true);
 
-      const resultado = await promptGoogleAsync(
-        googleRedirectUri
-          ? { redirectUri: googleRedirectUri }
-          : undefined
-      );
+      const resultado = await promptGoogleAsync();
 
       if (resultado.type !== 'success') {
         setGoogleLoading(false);
@@ -127,64 +123,67 @@ export default function Login() {
     }
   };
 
-  // Con el access token de Google pedimos nombre/email y creamos sesion local.
-  const loginGoogleConRespuesta = useCallback(async () => {
-    try {
-      const accessToken = googleResponse.authentication?.accessToken;
-
-      if (!accessToken) {
-        setModalMessage('Google no devolvio access token');
-        setModalVisible(true);
-
+  // Cuando Google responde correctamente, pedimos los datos del usuario.
+  useEffect(() => {
+    const loginGoogleConRespuesta = async () => {
+      if (googleResponse?.type !== 'success') {
         return;
       }
 
-      const googleUserRes = await fetch(
-        'https://www.googleapis.com/oauth2/v2/userinfo',
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`
+      try {
+        const accessToken = googleResponse.authentication?.accessToken;
+
+        if (!accessToken) {
+          setModalMessage('Google no devolvio access token');
+          setModalVisible(true);
+
+          return;
+        }
+
+        const googleUserRes = await fetch(
+          'https://www.googleapis.com/oauth2/v2/userinfo',
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`
+            }
           }
-        }
-      );
+        );
 
-      const googleUser = await googleUserRes.json();
+        const googleUser = await googleUserRes.json();
 
-      const res = await axios.post(
-        `${API_URL}/api/usuarios/google`,
-        {
-          nombre: googleUser.name,
-          email: googleUser.email
-        }
-      );
+        const res = await axios.post(
+          `${API_URL}/api/usuarios/google`,
+          {
+            nombre: googleUser.name,
+            email: googleUser.email
+          }
+        );
 
-      await AsyncStorage.setItem(
-        'token',
-        res.data.token
-      );
+        await AsyncStorage.setItem(
+          'token',
+          res.data.token
+        );
 
-      setModalMessage('Inicio con Google correcto');
-      setModalVisible(true);
+        setModalMessage('Inicio con Google correcto');
+        setModalVisible(true);
 
-      setTimeout(() => {
-        router.replace('/');
-      }, 1000);
-    } catch (err: any) {
-      console.log(err?.response?.data || err.message);
+        setTimeout(() => {
+          router.replace('/');
+        }, 1000);
+      } catch (err: any) {
+        console.log(err?.response?.data || err.message);
 
-      setModalMessage('Error al conectar Google con la app');
-      setModalVisible(true);
-    } finally {
-      setGoogleLoading(false);
-    }
-  }, [googleResponse, router]);
+        setModalMessage('Error al conectar Google con la app');
+        setModalVisible(true);
+      } finally {
+        setGoogleLoading(false);
+      }
+    };
 
-  // Cuando Google responde correctamente, pedimos los datos del usuario.
-  useEffect(() => {
-    if (googleResponse?.type === 'success') {
+    if (googleResponse) {
       loginGoogleConRespuesta();
     }
-  }, [googleResponse, loginGoogleConRespuesta]);
+  }, [googleResponse, router]);
 
   return (
     <View
