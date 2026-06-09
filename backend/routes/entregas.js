@@ -178,9 +178,15 @@ router.post('/finalizar', verificarToken, (req, res) => {
 
   db.query(
     `
-    SELECT *
+    SELECT
+      carrito.id_producto,
+      carrito.cantidad,
+      productos.nombre,
+      productos.stock
     FROM carrito
-    WHERE id_usuario=?
+    JOIN productos
+      ON productos.id = carrito.id_producto
+    WHERE carrito.id_usuario=?
     `,
     [userId],
     (err, items) => {
@@ -195,6 +201,19 @@ router.post('/finalizar', verificarToken, (req, res) => {
         });
       }
 
+      const sinStock = items.find(
+        (item) => Number(item.stock) < Number(item.cantidad)
+      );
+
+      if (sinStock) {
+        return res.status(400).json({
+          message: `Stock insuficiente para ${sinStock.nombre}`
+        });
+      }
+
+      let pendientes = items.length;
+      let huboError = false;
+
       items.forEach((item) => {
         db.query(
           `
@@ -205,32 +224,57 @@ router.post('/finalizar', verificarToken, (req, res) => {
           [
             item.id_producto,
             userId
-          ]
+          ],
+          (errEntrega) => {
+            if (errEntrega && !huboError) {
+              huboError = true;
+              console.log(errEntrega);
+              return res.status(500).json(errEntrega);
+            }
+          }
         );
 
         db.query(
           `
           UPDATE productos
           SET stock = stock - ?
-          WHERE id=?
+          WHERE id=? AND stock >= ?
           `,
           [
             item.cantidad,
-            item.id_producto
-          ]
+            item.id_producto,
+            item.cantidad
+          ],
+          (errStock) => {
+            if (errStock && !huboError) {
+              huboError = true;
+              console.log(errStock);
+              return res.status(500).json(errStock);
+            }
+
+            pendientes -= 1;
+
+            if (pendientes === 0 && !huboError) {
+              db.query(
+                `
+                DELETE FROM carrito
+                WHERE id_usuario=?
+                `,
+                [userId],
+                (errDelete) => {
+                  if (errDelete) {
+                    console.log(errDelete);
+                    return res.status(500).json(errDelete);
+                  }
+
+                  res.json({
+                    message: 'Compra finalizada'
+                  });
+                }
+              );
+            }
+          }
         );
-      });
-
-      db.query(
-        `
-        DELETE FROM carrito
-        WHERE id_usuario=?
-        `,
-        [userId]
-      );
-
-      res.json({
-        message: 'Compra finalizada'
       });
     }
   );

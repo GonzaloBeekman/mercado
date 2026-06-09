@@ -1,6 +1,7 @@
 import {
   View,
-  Text
+  Text,
+  Platform
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { useEffect, useState } from 'react';
@@ -14,6 +15,8 @@ import { ProfilePhotoPicker } from '../components/perfil/ProfilePhotoPicker';
 import { ProfileForm } from '../components/perfil/ProfileForm';
 
 export default function Perfil() {
+  const isWeb = Platform.OS === 'web';
+
   const [nombre, setNombre] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -176,27 +179,54 @@ export default function Perfil() {
     <View
       style={[
         styles.container,
-        { padding: 20 }
+        {
+          padding: isWeb ? 24 : 18,
+          justifyContent: isWeb ? 'flex-start' : 'flex-start'
+        }
       ]}
     >
-      <Text style={styles.title}>
-        Mi Perfil
-      </Text>
+      <View
+        style={{
+          width: '100%',
+          maxWidth: isWeb ? 560 : undefined,
+          alignSelf: 'center',
+          backgroundColor: '#fff',
+          borderRadius: isWeb ? 12 : 18,
+          padding: isWeb ? 24 : 18,
+          shadowColor: '#000',
+          shadowOpacity: 0.08,
+          shadowRadius: 8,
+          elevation: 3
+        }}
+      >
+        <Text
+          style={[
+            styles.title,
+            {
+              alignSelf: 'center',
+              textAlign: 'center',
+              marginBottom: 18
+            }
+          ]}
+        >
+          Mi Perfil
+        </Text>
 
-      <ProfilePhotoPicker
-        foto={foto}
-        onCamera={sacarFoto}
-        onGallery={seleccionarImagen}
-      />
+        <ProfilePhotoPicker
+          foto={foto}
+          onCamera={sacarFoto}
+          onGallery={seleccionarImagen}
+        />
 
-      <ProfileForm
-        email={email}
-        nombre={nombre}
-        password={password}
-        onNombreChange={setNombre}
-        onPasswordChange={setPassword}
-        onGuardar={actualizarPerfil}
-      />
+        <ProfileForm
+          email={email}
+          nombre={nombre}
+          password={password}
+          onNombreChange={setNombre}
+          onPasswordChange={setPassword}
+          onGuardar={actualizarPerfil}
+        />
+      </View>
 
       <CustomModal
         visible={modalVisible}

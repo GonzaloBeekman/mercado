@@ -35,6 +35,10 @@ export function ProductCard({
   // Limpiamos la URL para evitar espacios pegados al copiarla desde el navegador.
   const imageUrl = item.imagen_url?.trim();
   const shouldShowImage = Boolean(imageUrl) && !imageError;
+  const stockValue =
+    item.stock !== undefined && item.stock !== null
+      ? Math.max(0, Number(item.stock))
+      : null;
 
   // Si el vendedor cambia la URL, la card vuelve a intentar cargar la imagen.
   useEffect(() => {
@@ -52,7 +56,7 @@ export function ProductCard({
     : numColumns === 1
       ? '92%'
       : '47%';
-  const hasStock = item.stock !== undefined && item.stock !== null;
+  const hasStock = stockValue !== null;
 
   return (
     <View
@@ -156,25 +160,25 @@ export function ProductCard({
       {hasStock && (
         <Text
           style={{
-            backgroundColor: Number(item.stock) > 0 ? '#e8f7ef' : '#fff0f0',
+            backgroundColor: Number(stockValue) > 0 ? '#e8f7ef' : '#fff0f0',
             paddingVertical: isWeb ? 7 : 10,
             borderRadius: 10,
             marginHorizontal: isWeb ? 14 : 10,
             marginTop: 10,
             textAlign: 'center',
-            color: Number(item.stock) > 0 ? '#007f3b' : '#c62828',
+            color: Number(stockValue) > 0 ? '#007f3b' : '#c62828',
             fontWeight: 'bold',
             borderWidth: 1,
-            borderColor: Number(item.stock) > 0 ? '#bfe9d1' : '#ffd6d6'
+            borderColor: Number(stockValue) > 0 ? '#bfe9d1' : '#ffd6d6'
           }}
         >
-          Stock: {item.stock}
+          Stock: {stockValue}
         </Text>
       )}
 
       {/* El comprador solo puede agregar productos con stock. */}
       {rol === 'comprador' && (
-        Number(item.stock) > 0 ? (
+        Number(stockValue) > 0 ? (
           <TouchableOpacity
             onPress={() => onAgregarCarrito(item.id)}
             style={{

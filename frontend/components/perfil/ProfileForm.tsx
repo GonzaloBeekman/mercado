@@ -2,7 +2,8 @@ import {
   View,
   Text,
   TextInput,
-  TouchableOpacity
+  TouchableOpacity,
+  Platform
 } from 'react-native';
 
 import styles from '../../styles/globalStyles';
@@ -26,44 +27,88 @@ export function ProfileForm({
   onPasswordChange,
   onGuardar
 }: Props) {
+  const isWeb = Platform.OS === 'web';
+  const inputStyle = [
+    styles.input,
+    {
+      maxWidth: undefined,
+      alignSelf: 'stretch' as const
+    }
+  ];
+
   return (
-    <View>
-      <Text>Email</Text>
+    <View
+      style={{
+        width: '100%',
+        gap: 8
+      }}
+    >
+      <Text
+        style={{
+          fontSize: 13,
+          color: '#666',
+          fontWeight: '700'
+        }}
+      >
+        Email
+      </Text>
 
       <Text
         style={{
-          marginBottom: 10
+          marginBottom: 8,
+          padding: 12,
+          borderRadius: 8,
+          backgroundColor: '#f5f7fb',
+          color: '#222',
+          borderWidth: 1,
+          borderColor: '#e5e8ef'
         }}
       >
         {email}
       </Text>
 
-      <Text>Nombre</Text>
+      <Text
+        style={{
+          fontSize: 13,
+          color: '#666',
+          fontWeight: '700'
+        }}
+      >
+        Nombre
+      </Text>
 
       <TextInput
         value={nombre}
         onChangeText={onNombreChange}
-        style={styles.input}
+        style={inputStyle}
       />
 
-      <Text>Nueva contrasena</Text>
+      <Text
+        style={{
+          fontSize: 13,
+          color: '#666',
+          fontWeight: '700'
+        }}
+      >
+        Nueva contrasena
+      </Text>
 
       <TextInput
         value={password}
         onChangeText={onPasswordChange}
         secureTextEntry
         placeholder="Opcional"
-        style={styles.input}
+        style={inputStyle}
       />
 
       <TouchableOpacity
         onPress={onGuardar}
         style={{
           backgroundColor: '#3483fa',
-          padding: 12,
-          borderRadius: 8,
+          paddingVertical: isWeb ? 13 : 12,
+          borderRadius: 9,
           alignItems: 'center',
-          marginTop: 10
+          marginTop: 8
         }}
       >
         <Text

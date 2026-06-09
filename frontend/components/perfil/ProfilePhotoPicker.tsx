@@ -29,10 +29,12 @@ export function ProfilePhotoPicker({
             'https://picsum.photos/200'
         }}
         style={{
-          width: 120,
-          height: 120,
-          borderRadius: 60,
-          backgroundColor: '#ddd'
+          width: 124,
+          height: 124,
+          borderRadius: 62,
+          backgroundColor: '#ddd',
+          borderWidth: 3,
+          borderColor: '#eef2f7'
         }}
       />
 
@@ -46,9 +48,9 @@ export function ProfilePhotoPicker({
         <TouchableOpacity
           onPress={onCamera}
           style={{
-            backgroundColor: '#111',
+            backgroundColor: '#111827',
             paddingVertical: 9,
-            paddingHorizontal: 12,
+            paddingHorizontal: 14,
             borderRadius: 8
           }}
         >
@@ -67,7 +69,7 @@ export function ProfilePhotoPicker({
           style={{
             backgroundColor: '#3483fa',
             paddingVertical: 9,
-            paddingHorizontal: 12,
+            paddingHorizontal: 14,
             borderRadius: 8
           }}
         >
@@ -86,7 +88,8 @@ export function ProfilePhotoPicker({
         style={{
           textAlign: 'center',
           marginTop: 8,
-          color: '#777'
+          color: '#777',
+          fontSize: 12
         }}
       >
         Luego toca Guardar cambios
