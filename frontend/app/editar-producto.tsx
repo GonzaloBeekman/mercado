@@ -4,6 +4,7 @@ import {
   TextInput,
   Image,
   Platform,
+  ScrollView,
   TouchableOpacity
 } from 'react-native';
 
@@ -37,14 +38,21 @@ export default function EditarProducto() {
       maxWidth: undefined,
       alignSelf: 'stretch' as const,
       backgroundColor: '#fff',
-      color: '#111'
+      color: '#111',
+      marginBottom: 0,
+      minHeight: isWeb ? 44 : 48
     }
   ];
   const labelStyle = {
     color: '#333',
     fontSize: 14,
     fontWeight: '700' as const,
-    marginBottom: 6
+    marginBottom: 6,
+    marginTop: 2
+  };
+  const fieldStyle = {
+    gap: 6,
+    width: '100%' as const
   };
 
   // Estados del formulario cargados con los datos actuales del producto.
@@ -170,7 +178,16 @@ export default function EditarProducto() {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView
+      style={{ flex: 1, backgroundColor: '#f5f5f5' }}
+      contentInsetAdjustmentBehavior="automatic"
+      keyboardShouldPersistTaps="handled"
+      contentContainerStyle={{
+        flexGrow: 1,
+        padding: isWeb ? 24 : 16,
+        paddingBottom: isWeb ? 36 : 32
+      }}
+    >
       <View
         style={{
           width: '100%',
@@ -179,6 +196,7 @@ export default function EditarProducto() {
           backgroundColor: '#fff',
           borderRadius: isWeb ? 12 : 16,
           padding: isWeb ? 22 : 18,
+          gap: 12,
           shadowColor: '#000',
           shadowOpacity: 0.08,
           shadowRadius: 8,
@@ -197,9 +215,9 @@ export default function EditarProducto() {
             }}
             style={{
               width: '100%',
-              height: isWeb ? 210 : 170,
+              height: isWeb ? 190 : 150,
               borderRadius: 10,
-              marginBottom: 12
+              marginBottom: 0
             }}
             resizeMode="cover"
             onError={() => setImagenConError(true)}
@@ -208,9 +226,8 @@ export default function EditarProducto() {
           <View
             style={{
               width: '100%',
-              height: isWeb ? 210 : 170,
+              height: isWeb ? 190 : 150,
               borderRadius: 10,
-              marginBottom: 12,
               alignItems: 'center',
               justifyContent: 'center',
               backgroundColor: '#f0f0f0'
@@ -223,36 +240,40 @@ export default function EditarProducto() {
         )}
 
         {/* Labels fijos para que en Android se entienda cada campo aunque este vacio. */}
-        <Text style={labelStyle}>URL de imagen</Text>
-        <TextInput
-          placeholder="Pega una URL de imagen"
-          value={imagen}
-          onChangeText={(text) => {
-            setImagen(text);
-            setImagenConError(false);
-          }}
-          style={inputCardStyle}
-          placeholderTextColor="#777"
-          selectionColor="#3483fa"
-        />
+        <View style={fieldStyle}>
+          <Text style={labelStyle}>URL de imagen</Text>
+          <TextInput
+            placeholder="Pega una URL de imagen"
+            value={imagen}
+            onChangeText={(text) => {
+              setImagen(text);
+              setImagenConError(false);
+            }}
+            style={inputCardStyle}
+            placeholderTextColor="#777"
+            selectionColor="#3483fa"
+          />
+        </View>
 
-        <Text style={labelStyle}>Nombre</Text>
-        <TextInput
-          placeholder="Nombre del producto"
-          value={nuevoNombre}
-          onChangeText={setNuevoNombre}
-          style={inputCardStyle}
-          placeholderTextColor="#777"
-          selectionColor="#3483fa"
-        />
+        <View style={fieldStyle}>
+          <Text style={labelStyle}>Nombre</Text>
+          <TextInput
+            placeholder="Nombre del producto"
+            value={nuevoNombre}
+            onChangeText={setNuevoNombre}
+            style={inputCardStyle}
+            placeholderTextColor="#777"
+            selectionColor="#3483fa"
+          />
+        </View>
 
         <View
           style={{
             flexDirection: isWeb ? 'row' : 'column',
-            gap: isWeb ? 10 : 0
+            gap: 12
           }}
         >
-          <View style={{ flex: 1 }}>
+          <View style={{ ...fieldStyle, flex: 1 }}>
             <Text style={labelStyle}>Precio</Text>
             <TextInput
               placeholder="Precio"
@@ -265,7 +286,7 @@ export default function EditarProducto() {
             />
           </View>
 
-          <View style={{ flex: 1 }}>
+          <View style={{ ...fieldStyle, flex: 1 }}>
             <Text style={labelStyle}>Stock</Text>
             <TextInput
               placeholder="Cantidad disponible"
@@ -279,19 +300,24 @@ export default function EditarProducto() {
           </View>
         </View>
 
-        <Text style={labelStyle}>Descripcion</Text>
-        <TextInput
-          placeholder="Descripcion del producto"
-          value={nuevaDescripcion}
-          onChangeText={setNuevaDescripcion}
-          style={[
-            ...inputCardStyle,
-            { height: 90, textAlignVertical: 'top' }
-          ]}
-          multiline
-          placeholderTextColor="#777"
-          selectionColor="#3483fa"
-        />
+        <View style={fieldStyle}>
+          <Text style={labelStyle}>Descripcion</Text>
+          <TextInput
+            placeholder="Descripcion del producto"
+            value={nuevaDescripcion}
+            onChangeText={setNuevaDescripcion}
+            style={[
+              ...inputCardStyle,
+              {
+                minHeight: isWeb ? 100 : 118,
+                textAlignVertical: 'top'
+              }
+            ]}
+            multiline
+            placeholderTextColor="#777"
+            selectionColor="#3483fa"
+          />
+        </View>
 
         <TouchableOpacity
           onPress={editarProducto}
@@ -300,7 +326,7 @@ export default function EditarProducto() {
             paddingVertical: 13,
             borderRadius: 9,
             alignItems: 'center',
-            marginTop: 4
+            marginTop: 2
           }}
         >
           <Text style={{ color: '#fff', fontWeight: '700' }}>
@@ -314,6 +340,6 @@ export default function EditarProducto() {
         message={modalMessage}
         onClose={() => setModalVisible(false)}
       />
-    </View>
+    </ScrollView>
   );
 }
