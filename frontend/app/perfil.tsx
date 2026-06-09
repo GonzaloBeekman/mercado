@@ -88,7 +88,9 @@ export default function Perfil() {
       console.log(err?.response?.data || err.message);
 
       setModalMessage(
-        err?.response?.data?.message ||
+        err?.response?.data?.detail
+          ? `${err.response.data.message}: ${err.response.data.detail}`
+          : err?.response?.data?.message ||
         'Error al actualizar perfil'
       );
 

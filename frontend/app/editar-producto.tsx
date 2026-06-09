@@ -7,7 +7,7 @@ import {
   TouchableOpacity
 } from 'react-native';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import {
   useLocalSearchParams,
@@ -68,6 +68,36 @@ export default function EditarProducto() {
 
   const imagenLimpia = imagen.trim();
   const mostrarImagen = Boolean(imagenLimpia) && !imagenConError;
+
+  // Carga el producto actualizado para mostrar el stock real de la base.
+  useEffect(() => {
+    const cargarProducto = async () => {
+      try {
+        const res = await axios.get(`${API_URL}/api/productos/${id}`);
+        const producto = res.data;
+
+        if (!producto) return;
+
+        setNuevoNombre(producto.nombre || '');
+        setNuevoPrecio(String(producto.precio || ''));
+        setNuevoStock(
+          producto.stock !== null && producto.stock !== undefined
+            ? String(producto.stock)
+            : ''
+        );
+        setNuevaDescripcion(producto.descripcion || '');
+        setImagen(producto.imagen_url || '');
+        setImagenConError(false);
+      } catch (err: any) {
+        console.log(err?.response?.data || err.message);
+
+        setModalMessage('No se pudo cargar el producto actualizado');
+        setModalVisible(true);
+      }
+    };
+
+    cargarProducto();
+  }, [id]);
 
   // Guarda los cambios del producto en el backend.
   const editarProducto = async () => {

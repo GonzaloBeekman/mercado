@@ -34,8 +34,9 @@ app.use(
   })
 );
 
-// Permitimos JSON mas grande porque la foto de perfil se guarda como base64.
-app.use(express.json({ limit: '5mb' }));
+// Permitimos JSON grande porque la foto de perfil se guarda como base64.
+// Si la foto supera este limite, el backend responde error antes de llegar a la ruta.
+app.use(express.json({ limit: '20mb' }));
 
 // Rutas principales de la API.
 app.use('/api/usuarios', require('./routes/usuarios'));
