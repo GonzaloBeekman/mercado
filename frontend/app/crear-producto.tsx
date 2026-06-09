@@ -3,7 +3,8 @@ import {
   TextInput,
   Text,
   TouchableOpacity,
-  Platform
+  Platform,
+  ScrollView
 } from 'react-native';
 
 import { useState } from 'react';
@@ -22,9 +23,24 @@ export default function CrearProducto() {
     styles.input,
     {
       maxWidth: undefined,
-      alignSelf: 'stretch' as const
+      alignSelf: 'stretch' as const,
+      backgroundColor: '#fff',
+      color: '#111',
+      marginBottom: 0,
+      minHeight: isWeb ? 44 : 48
     }
   ];
+  const labelStyle = {
+    color: '#333',
+    fontSize: 14,
+    fontWeight: '700' as const,
+    marginBottom: 6,
+    marginTop: 2
+  };
+  const fieldStyle = {
+    gap: 6,
+    width: '100%' as const
+  };
 
   // Estados del formulario para crear un producto nuevo.
   const [nombre, setNombre] = useState('');
@@ -106,7 +122,16 @@ export default function CrearProducto() {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView
+      style={{ flex: 1, backgroundColor: '#f5f5f5' }}
+      contentInsetAdjustmentBehavior="automatic"
+      keyboardShouldPersistTaps="handled"
+      contentContainerStyle={{
+        flexGrow: 1,
+        padding: isWeb ? 24 : 16,
+        paddingBottom: isWeb ? 36 : 32
+      }}
+    >
       <View
         style={{
           width: '100%',
@@ -115,6 +140,7 @@ export default function CrearProducto() {
           backgroundColor: '#fff',
           borderRadius: isWeb ? 12 : 16,
           padding: isWeb ? 22 : 18,
+          gap: 12,
           shadowColor: '#000',
           shadowOpacity: 0.08,
           shadowRadius: 8,
@@ -125,58 +151,82 @@ export default function CrearProducto() {
           Crear Producto
         </Text>
 
-        <TextInput
-          placeholder="Nombre"
-          value={nombre}
-          onChangeText={setNombre}
-          style={inputCardStyle}
-          placeholderTextColor="#777"
-        />
+        {/* Labels fijos para que el formulario se entienda en web y Android. */}
+        <View style={fieldStyle}>
+          <Text style={labelStyle}>Nombre</Text>
+          <TextInput
+            placeholder="Nombre del producto"
+            value={nombre}
+            onChangeText={setNombre}
+            style={inputCardStyle}
+            placeholderTextColor="#777"
+            selectionColor="#3483fa"
+          />
+        </View>
 
         <View
           style={{
             flexDirection: isWeb ? 'row' : 'column',
-            gap: isWeb ? 10 : 0
+            gap: 12
           }}
         >
-          <TextInput
-            placeholder="Precio"
-            value={precio}
-            onChangeText={setPrecio}
-            keyboardType="numeric"
-            style={[...inputCardStyle, { flex: 1 }]}
-            placeholderTextColor="#777"
-          />
+          <View style={{ ...fieldStyle, flex: 1 }}>
+            <Text style={labelStyle}>Precio</Text>
+            <TextInput
+              placeholder="Precio"
+              value={precio}
+              onChangeText={setPrecio}
+              keyboardType="numeric"
+              style={[...inputCardStyle, { flex: 1 }]}
+              placeholderTextColor="#777"
+              selectionColor="#3483fa"
+            />
+          </View>
 
+          <View style={{ ...fieldStyle, flex: 1 }}>
+            <Text style={labelStyle}>Stock</Text>
+            <TextInput
+              placeholder="Cantidad disponible"
+              value={stock}
+              onChangeText={setStock}
+              keyboardType="numeric"
+              style={[...inputCardStyle, { flex: 1 }]}
+              placeholderTextColor="#777"
+              selectionColor="#3483fa"
+            />
+          </View>
+        </View>
+
+        <View style={fieldStyle}>
+          <Text style={labelStyle}>Descripcion</Text>
           <TextInput
-            placeholder="Stock"
-            value={stock}
-            onChangeText={setStock}
-            keyboardType="numeric"
-            style={[...inputCardStyle, { flex: 1 }]}
+            placeholder="Descripcion del producto"
+            value={descripcion}
+            onChangeText={setDescripcion}
+            style={[
+              ...inputCardStyle,
+              {
+                minHeight: isWeb ? 100 : 118,
+                textAlignVertical: 'top'
+              }
+            ]}
+            multiline
             placeholderTextColor="#777"
+            selectionColor="#3483fa"
           />
         </View>
 
-        <TextInput
-          placeholder="Descripcion"
-          value={descripcion}
-          onChangeText={setDescripcion}
-          style={[
-            ...inputCardStyle,
-            { height: 90, textAlignVertical: 'top' }
-          ]}
-          multiline
-          placeholderTextColor="#777"
-        />
-
-        <TextInput
-          placeholder="URL de imagen"
-          value={imagen}
-          onChangeText={setImagen}
-          style={inputCardStyle}
-          placeholderTextColor="#777"
-        />
+        <View style={fieldStyle}>
+          <Text style={labelStyle}>URL de imagen</Text>
+          <TextInput
+            placeholder="Pega una URL de imagen"
+            value={imagen}
+            onChangeText={setImagen}
+            style={inputCardStyle}
+            placeholderTextColor="#777"
+            selectionColor="#3483fa"
+          />
+        </View>
 
         <TouchableOpacity
           onPress={crearProducto}
@@ -186,7 +236,7 @@ export default function CrearProducto() {
             paddingVertical: 13,
             borderRadius: 9,
             alignItems: 'center',
-            marginTop: 4
+            marginTop: 2
           }}
         >
           <Text style={{ color: '#fff', fontWeight: '700' }}>
@@ -200,6 +250,6 @@ export default function CrearProducto() {
         message={modalMessage}
         onClose={() => setModalVisible(false)}
       />
-    </View>
+    </ScrollView>
   );
 }
