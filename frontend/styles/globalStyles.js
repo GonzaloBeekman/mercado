@@ -18,6 +18,7 @@ export default StyleSheet.create({
     borderRadius: 8,
     marginBottom: 10,
     backgroundColor: '#fff',
+    color: '#111',
     maxWidth: isWeb ? 460 : undefined,
     width: '100%',
     alignSelf: isWeb ? 'center' : 'auto'

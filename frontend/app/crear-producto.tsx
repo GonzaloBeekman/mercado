@@ -130,6 +130,7 @@ export default function CrearProducto() {
           value={nombre}
           onChangeText={setNombre}
           style={inputCardStyle}
+          placeholderTextColor="#777"
         />
 
         <View
@@ -144,6 +145,7 @@ export default function CrearProducto() {
             onChangeText={setPrecio}
             keyboardType="numeric"
             style={[...inputCardStyle, { flex: 1 }]}
+            placeholderTextColor="#777"
           />
 
           <TextInput
@@ -152,6 +154,7 @@ export default function CrearProducto() {
             onChangeText={setStock}
             keyboardType="numeric"
             style={[...inputCardStyle, { flex: 1 }]}
+            placeholderTextColor="#777"
           />
         </View>
 
@@ -164,6 +167,7 @@ export default function CrearProducto() {
             { height: 90, textAlignVertical: 'top' }
           ]}
           multiline
+          placeholderTextColor="#777"
         />
 
         <TextInput
@@ -171,6 +175,7 @@ export default function CrearProducto() {
           value={imagen}
           onChangeText={setImagen}
           style={inputCardStyle}
+          placeholderTextColor="#777"
         />
 
         <TouchableOpacity

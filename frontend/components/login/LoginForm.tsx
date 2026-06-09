@@ -46,6 +46,7 @@ export function LoginForm({
         style={styles.input}
         autoCapitalize="none"
         keyboardType="email-address"
+        placeholderTextColor="#777"
       />
 
       <PasswordInput

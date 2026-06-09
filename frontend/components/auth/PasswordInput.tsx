@@ -39,8 +39,10 @@ export function PasswordInput({
         style={{
           flex: 1,
           paddingVertical: 12,
+          color: '#111',
           outlineStyle: 'none' as any
         }}
+        placeholderTextColor="#777"
       />
 
       <TouchableOpacity

@@ -81,6 +81,7 @@ export function ProfileForm({
         value={nombre}
         onChangeText={onNombreChange}
         style={inputStyle}
+        placeholderTextColor="#777"
       />
 
       <Text
@@ -99,6 +100,7 @@ export function ProfileForm({
         secureTextEntry
         placeholder="Opcional"
         style={inputStyle}
+        placeholderTextColor="#777"
       />
 
       <TouchableOpacity

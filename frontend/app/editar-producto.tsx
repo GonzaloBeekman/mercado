@@ -222,6 +222,7 @@ export default function EditarProducto() {
             setImagenConError(false);
           }}
           style={inputCardStyle}
+          placeholderTextColor="#777"
         />
 
         <TextInput
@@ -229,6 +230,7 @@ export default function EditarProducto() {
           value={nuevoNombre}
           onChangeText={setNuevoNombre}
           style={inputCardStyle}
+          placeholderTextColor="#777"
         />
 
         <View
@@ -243,6 +245,7 @@ export default function EditarProducto() {
             onChangeText={setNuevoPrecio}
             keyboardType="numeric"
             style={[...inputCardStyle, { flex: 1 }]}
+            placeholderTextColor="#777"
           />
 
           <TextInput
@@ -251,6 +254,7 @@ export default function EditarProducto() {
             onChangeText={setNuevoStock}
             keyboardType="numeric"
             style={[...inputCardStyle, { flex: 1 }]}
+            placeholderTextColor="#777"
           />
         </View>
 
@@ -263,6 +267,7 @@ export default function EditarProducto() {
             { height: 90, textAlignVertical: 'top' }
           ]}
           multiline
+          placeholderTextColor="#777"
         />
 
         <TouchableOpacity
