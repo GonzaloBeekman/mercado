@@ -1,0 +1,36 @@
+# Dependencias instaladas localmente.
+node_modules/
+backend/node_modules/
+frontend/node_modules/
+
+# Variables privadas.
+.env
+.env.local
+.env*.local
+backend/.env
+frontend/.env.local
+
+# Builds y cache.
+dist/
+web-build/
+.expo/
+.expo-shared/
+expo-env.d.ts
+*.tsbuildinfo
+
+# Logs.
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+expo-web*.log
+
+# Archivos nativos/sensibles.
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.pem
+
+# Backup del repo Git anidado del frontend.
+.frontend-git-backup/

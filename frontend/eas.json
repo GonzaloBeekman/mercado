@@ -1,0 +1,28 @@
+{
+  "cli": {
+    "version": ">= 16.0.0"
+  },
+  "build": {
+    "preview": {
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://gestionproducto.alwaysdata.net",
+        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "9657592674-oa8e00oe999o2754t9jtuo2tpqp1t9sc.apps.googleusercontent.com",
+        "EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID": "9657592674-ag5s5gch599jakh64l7omsueqd6b6bsh.apps.googleusercontent.com"
+      }
+    },
+    "production": {
+      "android": {
+        "buildType": "app-bundle"
+      },
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://gestionproducto.alwaysdata.net",
+        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "9657592674-oa8e00oe999o2754t9jtuo2tpqp1t9sc.apps.googleusercontent.com",
+        "EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID": "9657592674-ag5s5gch599jakh64l7omsueqd6b6bsh.apps.googleusercontent.com"
+      }
+    }
+  }
+}
