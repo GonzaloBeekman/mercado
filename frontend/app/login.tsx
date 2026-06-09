@@ -1,11 +1,10 @@
-import { Platform, View } from 'react-native';
+import { View } from 'react-native';
 
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Google from 'expo-auth-session/providers/google';
-import { makeRedirectUri } from 'expo-auth-session';
 import * as WebBrowser from 'expo-web-browser';
 
 import styles from '../styles/globalStyles';
@@ -28,20 +27,14 @@ export default function Login() {
   // Estados del modal que muestra mensajes al usuario.
   const [modalVisible, setModalVisible] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
-  const googleRedirectUri =
-    Platform.OS === 'web'
-      ? undefined
-      : makeRedirectUri({
-          scheme: 'frontend',
-          path: 'oauthredirect'
-        });
 
+  // Expo arma el redirect correcto segun la plataforma y el Client ID usado.
+  // No lo forzamos manualmente porque Google rechaza redirects custom mal registrados.
   const [googleRequest, googleResponse, promptGoogleAsync] =
     Google.useAuthRequest({
       webClientId: GOOGLE_AUTH.webClientId || undefined,
       androidClientId: GOOGLE_AUTH.androidClientId || undefined,
       iosClientId: GOOGLE_AUTH.iosClientId || undefined,
-      redirectUri: googleRedirectUri,
       selectAccount: true
     });
 

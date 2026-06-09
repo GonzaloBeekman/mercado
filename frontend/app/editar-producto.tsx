@@ -35,9 +35,17 @@ export default function EditarProducto() {
     styles.input,
     {
       maxWidth: undefined,
-      alignSelf: 'stretch' as const
+      alignSelf: 'stretch' as const,
+      backgroundColor: '#fff',
+      color: '#111'
     }
   ];
+  const labelStyle = {
+    color: '#333',
+    fontSize: 14,
+    fontWeight: '700' as const,
+    marginBottom: 6
+  };
 
   // Estados del formulario cargados con los datos actuales del producto.
   const [nuevoNombre, setNuevoNombre] =
@@ -214,8 +222,10 @@ export default function EditarProducto() {
           </View>
         )}
 
+        {/* Labels fijos para que en Android se entienda cada campo aunque este vacio. */}
+        <Text style={labelStyle}>URL de imagen</Text>
         <TextInput
-          placeholder="URL de imagen"
+          placeholder="Pega una URL de imagen"
           value={imagen}
           onChangeText={(text) => {
             setImagen(text);
@@ -223,14 +233,17 @@ export default function EditarProducto() {
           }}
           style={inputCardStyle}
           placeholderTextColor="#777"
+          selectionColor="#3483fa"
         />
 
+        <Text style={labelStyle}>Nombre</Text>
         <TextInput
-          placeholder="Nombre"
+          placeholder="Nombre del producto"
           value={nuevoNombre}
           onChangeText={setNuevoNombre}
           style={inputCardStyle}
           placeholderTextColor="#777"
+          selectionColor="#3483fa"
         />
 
         <View
@@ -239,27 +252,36 @@ export default function EditarProducto() {
             gap: isWeb ? 10 : 0
           }}
         >
-          <TextInput
-            placeholder="Precio"
-            value={nuevoPrecio}
-            onChangeText={setNuevoPrecio}
-            keyboardType="numeric"
-            style={[...inputCardStyle, { flex: 1 }]}
-            placeholderTextColor="#777"
-          />
+          <View style={{ flex: 1 }}>
+            <Text style={labelStyle}>Precio</Text>
+            <TextInput
+              placeholder="Precio"
+              value={nuevoPrecio}
+              onChangeText={setNuevoPrecio}
+              keyboardType="numeric"
+              style={[...inputCardStyle, { flex: 1 }]}
+              placeholderTextColor="#777"
+              selectionColor="#3483fa"
+            />
+          </View>
 
-          <TextInput
-            placeholder="Stock"
-            value={nuevoStock}
-            onChangeText={setNuevoStock}
-            keyboardType="numeric"
-            style={[...inputCardStyle, { flex: 1 }]}
-            placeholderTextColor="#777"
-          />
+          <View style={{ flex: 1 }}>
+            <Text style={labelStyle}>Stock</Text>
+            <TextInput
+              placeholder="Cantidad disponible"
+              value={nuevoStock}
+              onChangeText={setNuevoStock}
+              keyboardType="numeric"
+              style={[...inputCardStyle, { flex: 1 }]}
+              placeholderTextColor="#777"
+              selectionColor="#3483fa"
+            />
+          </View>
         </View>
 
+        <Text style={labelStyle}>Descripcion</Text>
         <TextInput
-          placeholder="Descripcion"
+          placeholder="Descripcion del producto"
           value={nuevaDescripcion}
           onChangeText={setNuevaDescripcion}
           style={[
@@ -268,6 +290,7 @@ export default function EditarProducto() {
           ]}
           multiline
           placeholderTextColor="#777"
+          selectionColor="#3483fa"
         />
 
         <TouchableOpacity
